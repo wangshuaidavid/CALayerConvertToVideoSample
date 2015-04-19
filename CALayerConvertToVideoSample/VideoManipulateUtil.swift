@@ -25,16 +25,6 @@ public class VideoManipulateUtil {
     }
     
     
-    public func getCoreAnimationBeginTimeAtZero() -> CFTimeInterval {
-        return AVCoreAnimationBeginTimeAtZero
-    }
-    
-    public func querySizeWithAssetURL(#videoURL: NSURL) -> CGSize {
-        let videoAsset = AVURLAsset(URL: videoURL, options: nil)
-        return self.querySize(video: videoAsset)
-    }
-    
-    
     public func createDynamicAlbum (#videoURL: NSURL, renderLayer:CALayer, duration: Float, completionBlock: VideoManipulateUtilExportCompletionBlock!) {
         self.createDynamicAlbum(videoURL: videoURL, audioURL: nil, renderLayer: renderLayer, duration: duration, completionBlock: completionBlock, isSaveToPhotosAlbum: false)
     }
@@ -122,35 +112,89 @@ public class VideoManipulateUtil {
         exporter.videoComposition = mainCompositionInst
         exporter.exportAsynchronouslyWithCompletionHandler {
             
-            if exporter.status == AVAssetExportSessionStatus.Completed {
+            let outputURL = exporter.outputURL
+
+            switch (exporter.status) {
+                case AVAssetExportSessionStatus.Completed:
+                    if isSaveToPhotosAlbum {
+                        self.exportCompletionHandleSaveToAssetLibrary(outputURL, block: completionBlock)
+                    }else {
+                        self.exportCompletionHandleNotSaveToAssetLibrary(outputURL, block: completionBlock)
+                    }
+                break;
+
+                case AVAssetExportSessionStatus.Failed:
+                    self.exportCompletionHandleWithError(-1, message: "Exporting Failed", block: completionBlock)
+                break;
                 
-                let outputURL = exporter.outputURL
+                case AVAssetExportSessionStatus.Cancelled:
+                    self.exportCompletionHandleWithError(-2, message: "Exporting Cancelled", block: completionBlock)
+                break;
                 
-                if !isSaveToPhotosAlbum {
-                    dispatch_async(dispatch_get_main_queue(), {
-                        completionBlock(outputURL, nil)
-                    })
-                    return
-                }
-                
-                
-                let library = ALAssetsLibrary()
-                if library.videoAtPathIsCompatibleWithSavedPhotosAlbum(outputURL) {
-                    library.writeVideoAtPathToSavedPhotosAlbum(outputURL, completionBlock: { (assetURL, error) -> Void in
-                        NSFileManager.defaultManager().removeItemAtURL(createdVideoURL!, error: nil)
-                        
-                        dispatch_async(dispatch_get_main_queue(), {
-                            completionBlock(assetURL, error)
-                        })
-                    })
-                }
-                
-            } else {
-                dispatch_async(dispatch_get_main_queue(), {
-                    completionBlock(nil, NSError(domain: "Video Export", code: -1, userInfo: nil))
-                })
+                default:
+                    self.exportCompletionHandleWithError(0, message: "Exporting Unkown error occured", block: completionBlock)
+                break;
             }
+            
         }
+    }
+    
+    
+    private func exportCompletionHandleNotSaveToAssetLibrary(fileAssetURL: NSURL, block: VideoManipulateUtilExportCompletionBlock) {
+        dispatch_async(dispatch_get_main_queue(), {
+            block(fileAssetURL, nil)
+        })
+    }
+    
+    
+    private func exportCompletionHandleSaveToAssetLibrary(fileAssetURL: NSURL, block: VideoManipulateUtilExportCompletionBlock) {
+        
+        let library = ALAssetsLibrary()
+        if library.videoAtPathIsCompatibleWithSavedPhotosAlbum(fileAssetURL) {
+            library.writeVideoAtPathToSavedPhotosAlbum(fileAssetURL, completionBlock: { (assetURL, error) -> Void in
+                NSFileManager.defaultManager().removeItemAtURL(fileAssetURL, error: nil)
+                
+                dispatch_async(dispatch_get_main_queue(), {
+                    block(assetURL, error)
+                })
+            })
+        }
+    }
+    
+    
+    private func exportCompletionHandleWithError(code: Int, message: String, block: VideoManipulateUtilExportCompletionBlock) {
+        dispatch_async(dispatch_get_main_queue(), {
+            block(nil, NSError(domain: "Video_Export", code: code, userInfo: ["ErrorMsg": message]))
+        })
+    }
+    
+    
+    private func applyVideoEffectsToComposition(composition: AVMutableVideoComposition, size:CGSize, overlayLayer: CALayer) {
+        let parentLayer = CALayer()
+        let videoLayer = CALayer()
+        
+        parentLayer.frame = CGRectMake(0, 0, size.width, size.height)
+        videoLayer.frame = CGRectMake(0, 0, size.width, size.height)
+        
+        parentLayer.addSublayer(videoLayer)
+        parentLayer.addSublayer(overlayLayer)
+        
+        composition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayer: videoLayer, inLayer: parentLayer)
+    }
+    
+    
+}
+
+extension VideoManipulateUtil {
+    
+    
+    public func getCoreAnimationBeginTimeAtZero() -> CFTimeInterval {
+        return AVCoreAnimationBeginTimeAtZero
+    }
+    
+    public func querySizeWithAssetURL(#videoURL: NSURL) -> CGSize {
+        let videoAsset = AVURLAsset(URL: videoURL, options: nil)
+        return self.querySize(video: videoAsset)
     }
     
     
@@ -176,20 +220,5 @@ public class VideoManipulateUtil {
         }
         
         return natureSize
-    }
-    
-    
-    private func applyVideoEffectsToComposition(composition: AVMutableVideoComposition, size:CGSize, overlayLayer: CALayer) {
-        let parentLayer = CALayer()
-        let videoLayer = CALayer()
-        
-        parentLayer.frame = CGRectMake(0, 0, size.width, size.height)
-        videoLayer.frame = CGRectMake(0, 0, size.width, size.height)
-        
-        parentLayer.addSublayer(videoLayer)
-        parentLayer.addSublayer(overlayLayer)
-        
-        composition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayer: videoLayer, inLayer: parentLayer)
-        
     }
 }
