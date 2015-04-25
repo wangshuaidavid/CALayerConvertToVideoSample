@@ -6,11 +6,11 @@
 	<dict>
 		<key>Assets.car</key>
 		<data>
-		BRgnYhaQu0sgB9RZlm8GscVaBgY=
+		eE4TiA9n2d8M+P140JyKdIsE26o=
 		</data>
 		<key>Headers/PKHUD-Swift.h</key>
 		<data>
-		jTDTXKsXD2nBnbnJSlxvpuJuIdE=
+		pc9QqTkYwZTCz9pyfocBUeMlzCk=
 		</data>
 		<key>Headers/PKHUD.h</key>
 		<data>
@@ -18,15 +18,15 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		IuCO29z/ByVlzc5i3ocSt8FTnmE=
+		jY+xcfkTSMddv6Pv1j3YXx4HMNk=
 		</data>
-		<key>Modules/PKHUD.swiftmodule/arm.swiftdoc</key>
+		<key>Modules/PKHUD.swiftmodule/arm64.swiftdoc</key>
 		<data>
-		yJRwJfLg5xhvcwm4mUZMTuuyxug=
+		8jUAT7boWlCCKOxBrxo/nwySrbI=
 		</data>
-		<key>Modules/PKHUD.swiftmodule/arm.swiftmodule</key>
+		<key>Modules/PKHUD.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		oy5wwX/8q+7q7RneGmrQRyc8AqQ=
+		ibKAUSE+H95qFozr6jJXGNGzAT8=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -37,23 +37,23 @@
 	<dict>
 		<key>Assets.car</key>
 		<data>
-		BRgnYhaQu0sgB9RZlm8GscVaBgY=
+		eE4TiA9n2d8M+P140JyKdIsE26o=
 		</data>
 		<key>Headers/PKHUD-Swift.h</key>
 		<data>
-		jTDTXKsXD2nBnbnJSlxvpuJuIdE=
+		pc9QqTkYwZTCz9pyfocBUeMlzCk=
 		</data>
 		<key>Headers/PKHUD.h</key>
 		<data>
 		WIH8pTr95C2k67FTagoCAzPlpco=
 		</data>
-		<key>Modules/PKHUD.swiftmodule/arm.swiftdoc</key>
+		<key>Modules/PKHUD.swiftmodule/arm64.swiftdoc</key>
 		<data>
-		yJRwJfLg5xhvcwm4mUZMTuuyxug=
+		8jUAT7boWlCCKOxBrxo/nwySrbI=
 		</data>
-		<key>Modules/PKHUD.swiftmodule/arm.swiftmodule</key>
+		<key>Modules/PKHUD.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		oy5wwX/8q+7q7RneGmrQRyc8AqQ=
+		ibKAUSE+H95qFozr6jJXGNGzAT8=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>

@@ -44,7 +44,7 @@ public class VideoManipulateUtil {
         
         
         // 1 - Prepare VideoAssetTrack and DurationTimeRange for further use
-        let videoAssetTrack = videoAsset.tracksWithMediaType(AVMediaTypeVideo).first as AVAssetTrack
+        let videoAssetTrack = videoAsset.tracksWithMediaType(AVMediaTypeVideo).first as! AVAssetTrack
        
         let durationCMTime = CMTimeMakeWithSeconds(Float64(duration), 30)
         let durationTimeRange = CMTimeRangeMake(kCMTimeZero, durationCMTime)
@@ -62,7 +62,7 @@ public class VideoManipulateUtil {
         // 3.0 - Handle Audio asset 
         if let audiourl_ = audioURL {
             let audioAsset = AVURLAsset(URL: audiourl_, options: nil)
-            let audioAssetTrack = audioAsset.tracksWithMediaType(AVMediaTypeAudio).first as AVAssetTrack
+            let audioAssetTrack = audioAsset.tracksWithMediaType(AVMediaTypeAudio).first as! AVAssetTrack
             let audioTrack = mixComposition.addMutableTrackWithMediaType(AVMediaTypeAudio, preferredTrackID: CMPersistentTrackID(kCMPersistentTrackID_Invalid))
             audioTrack.insertTimeRange(durationTimeRange, ofTrack: audioAssetTrack, atTime: kCMTimeZero, error: nil)
         }
@@ -97,7 +97,7 @@ public class VideoManipulateUtil {
         
         // 4 - Get path
         let paths = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-        let documentDirectory = paths.first as String
+        let documentDirectory = paths.first as! String
         let randomInt = arc4random() % 1000
         let fullPathDocs = documentDirectory.stringByAppendingPathComponent("CreatedVideo-\(randomInt).mov")
         
@@ -185,6 +185,13 @@ public class VideoManipulateUtil {
     
 }
 
+
+extension VideoManipulateUtil {
+    
+    
+}
+
+
 extension VideoManipulateUtil {
     
     
@@ -200,7 +207,7 @@ extension VideoManipulateUtil {
     
     private func querySize(#video: AVAsset) -> CGSize {
         
-        let videoAssetTrack = video.tracksWithMediaType(AVMediaTypeVideo).first as AVAssetTrack
+        let videoAssetTrack = video.tracksWithMediaType(AVMediaTypeVideo).first as! AVAssetTrack
         let videoTransform = videoAssetTrack.preferredTransform
         
         var isVideoAssetPortrait = false

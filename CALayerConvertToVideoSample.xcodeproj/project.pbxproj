@@ -21,8 +21,8 @@
 		290743FA1AE26CC400540D8C /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 290743EC1AE26C9600540D8C /* QuartzCore.framework */; };
 		290743FB1AE26CC400540D8C /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 290743EA1AE26C8C00540D8C /* MediaPlayer.framework */; };
 		290743FD1AE2715300540D8C /* baseVideo.m4v in Resources */ = {isa = PBXBuildFile; fileRef = 290743FC1AE2715300540D8C /* baseVideo.m4v */; };
-		290744031AE27F6A00540D8C /* PKHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 290743FE1AE27E7B00540D8C /* PKHUD.framework */; };
-		290744041AE27F6A00540D8C /* PKHUD.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 290743FE1AE27E7B00540D8C /* PKHUD.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		291F72D61AEB963200A4F00F /* PKHUD.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 291F72D31AEB961400A4F00F /* PKHUD.framework */; };
+		291F72D71AEB963200A4F00F /* PKHUD.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 291F72D31AEB961400A4F00F /* PKHUD.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,13 +36,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		290744051AE27F6A00540D8C /* Embed Frameworks */ = {
+		291F72D81AEB963200A4F00F /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				290744041AE27F6A00540D8C /* PKHUD.framework in Embed Frameworks */,
+				291F72D71AEB963200A4F00F /* PKHUD.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -68,7 +68,7 @@
 		290743F21AE26CAB00540D8C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		290743F41AE26CB300540D8C /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		290743FC1AE2715300540D8C /* baseVideo.m4v */ = {isa = PBXFileReference; lastKnownFileType = file; path = baseVideo.m4v; sourceTree = "<group>"; };
-		290743FE1AE27E7B00540D8C /* PKHUD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PKHUD.framework; sourceTree = "<group>"; };
+		291F72D31AEB961400A4F00F /* PKHUD.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PKHUD.framework; path = ../PKHUD.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,7 +82,7 @@
 				290743F91AE26CC400540D8C /* CoreMedia.framework in Frameworks */,
 				290743FA1AE26CC400540D8C /* QuartzCore.framework in Frameworks */,
 				290743FB1AE26CC400540D8C /* MediaPlayer.framework in Frameworks */,
-				290744031AE27F6A00540D8C /* PKHUD.framework in Frameworks */,
+				291F72D61AEB963200A4F00F /* PKHUD.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,7 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				290743FC1AE2715300540D8C /* baseVideo.m4v */,
-				290743FE1AE27E7B00540D8C /* PKHUD.framework */,
+				291F72D31AEB961400A4F00F /* PKHUD.framework */,
 				290743F41AE26CB300540D8C /* AssetsLibrary.framework */,
 				290743F21AE26CAB00540D8C /* AVFoundation.framework */,
 				290743F01AE26CA400540D8C /* CoreGraphics.framework */,
@@ -179,7 +179,7 @@
 				290743BE1AE26C0F00540D8C /* Sources */,
 				290743BF1AE26C0F00540D8C /* Frameworks */,
 				290743C01AE26C0F00540D8C /* Resources */,
-				290744051AE27F6A00540D8C /* Embed Frameworks */,
+				291F72D81AEB963200A4F00F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -399,6 +399,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/CALayerConvertToVideoSample",
+					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = CALayerConvertToVideoSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -413,6 +414,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/CALayerConvertToVideoSample",
+					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = CALayerConvertToVideoSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -473,6 +475,7 @@
 				290743E31AE26C0F00540D8C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		290743E41AE26C0F00540D8C /* Build configuration list for PBXNativeTarget "CALayerConvertToVideoSampleTests" */ = {
 			isa = XCConfigurationList;
@@ -481,6 +484,7 @@
 				290743E61AE26C0F00540D8C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
