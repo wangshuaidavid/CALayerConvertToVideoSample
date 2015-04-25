@@ -16,7 +16,6 @@ public typealias VideoManipulateUtilExportCompletionBlock = (NSURL!, NSError!) -
 
 public class VideoManipulateUtil {
     
-    
     public class var sharedInstance: VideoManipulateUtil {
         struct Static {
             static let instance: VideoManipulateUtil = VideoManipulateUtil()
@@ -26,18 +25,70 @@ public class VideoManipulateUtil {
     
     
     public func createDynamicAlbum (#videoURL: NSURL, renderLayer:CALayer, duration: Float, completionBlock: VideoManipulateUtilExportCompletionBlock!) {
-        self.createDynamicAlbum(videoURL: videoURL, audioURL: nil, renderLayer: renderLayer, duration: duration, completionBlock: completionBlock, isSaveToPhotosAlbum: false)
+        self.goCreateDynamicAlbum(videoURL: videoURL, audioURL: nil, renderLayer: renderLayer, duration: duration, completionBlock: completionBlock, isSaveToPhotosAlbum: false)
     }
     
     
     public func createDynamicAlbum (#videoURL: NSURL, audioURL: NSURL!, renderLayer:CALayer, duration: Float, completionBlock: VideoManipulateUtilExportCompletionBlock!) {
-        self.createDynamicAlbum(videoURL: videoURL, audioURL: audioURL, renderLayer: renderLayer, duration: duration, completionBlock: completionBlock, isSaveToPhotosAlbum: false)
+        self.goCreateDynamicAlbum(videoURL: videoURL, audioURL: audioURL, renderLayer: renderLayer, duration: duration, completionBlock: completionBlock, isSaveToPhotosAlbum: false)
     }
     
     
-
     public func createDynamicAlbum (#videoURL: NSURL, audioURL: NSURL!, renderLayer:CALayer, duration: Float, completionBlock: VideoManipulateUtilExportCompletionBlock!, isSaveToPhotosAlbum: Bool) {
+        
+        self.goCreateDynamicAlbum(videoURL: videoURL, audioURL: audioURL, renderLayer: renderLayer, duration: duration, completionBlock: completionBlock, isSaveToPhotosAlbum: isSaveToPhotosAlbum)
+    }
     
+}
+
+
+
+//MARK: Utility functions
+extension VideoManipulateUtil {
+    
+    
+    public func getCoreAnimationBeginTimeAtZero() -> CFTimeInterval {
+        return AVCoreAnimationBeginTimeAtZero
+    }
+    
+    public func querySizeWithAssetURL(#videoURL: NSURL) -> CGSize {
+        let videoAsset = AVURLAsset(URL: videoURL, options: nil)
+        return self.querySize(video: videoAsset)
+    }
+    
+    
+    private func querySize(#video: AVAsset) -> CGSize {
+        
+        let videoAssetTrack = video.tracksWithMediaType(AVMediaTypeVideo).first as! AVAssetTrack
+        let videoTransform = videoAssetTrack.preferredTransform
+        
+        var isVideoAssetPortrait = false
+        
+        if (videoTransform.a == 0 && videoTransform.b == 1.0 && videoTransform.c == -1.0 && videoTransform.d == 0) {
+            isVideoAssetPortrait = true
+        }
+        if (videoTransform.a == 0 && videoTransform.b == -1.0 && videoTransform.c == 1.0 && videoTransform.d == 0) {
+            isVideoAssetPortrait = true
+        }
+        
+        var natureSize = CGSizeZero
+        if isVideoAssetPortrait {
+            natureSize = CGSizeMake(videoAssetTrack.naturalSize.height, videoAssetTrack.naturalSize.width)
+        } else {
+            natureSize = videoAssetTrack.naturalSize
+        }
+        
+        return natureSize
+    }
+}
+
+
+//MARK: Main process functions
+extension VideoManipulateUtil {
+    
+    
+    private func goCreateDynamicAlbum (#videoURL: NSURL, audioURL: NSURL!, renderLayer:CALayer, duration: Float, completionBlock: VideoManipulateUtilExportCompletionBlock!, isSaveToPhotosAlbum: Bool) {
+        
         
         // 0 - Get AVAsset from NSURL
         let videoAsset = AVURLAsset(URL: videoURL, options: nil)
@@ -45,7 +96,7 @@ public class VideoManipulateUtil {
         
         // 1 - Prepare VideoAssetTrack and DurationTimeRange for further use
         let videoAssetTrack = videoAsset.tracksWithMediaType(AVMediaTypeVideo).first as! AVAssetTrack
-       
+        
         let durationCMTime = CMTimeMakeWithSeconds(Float64(duration), 30)
         let durationTimeRange = CMTimeRangeMake(kCMTimeZero, durationCMTime)
         
@@ -59,7 +110,7 @@ public class VideoManipulateUtil {
         videoTrack.insertTimeRange(durationTimeRange, ofTrack: videoAssetTrack, atTime: kCMTimeZero, error: nil)
         
         
-        // 3.0 - Handle Audio asset 
+        // 3.0 - Handle Audio asset
         if let audiourl_ = audioURL {
             let audioAsset = AVURLAsset(URL: audiourl_, options: nil)
             let audioAssetTrack = audioAsset.tracksWithMediaType(AVMediaTypeAudio).first as! AVAssetTrack
@@ -74,7 +125,7 @@ public class VideoManipulateUtil {
         
         // 3.2 - Create an AVMutableVideoCompositionLayerInstruction for the video track and fix the orientation.
         let videolayerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: videoTrack)
-
+        
         videolayerInstruction.setTransform(videoAssetTrack.preferredTransform, atTime: kCMTimeZero)
         videolayerInstruction.setOpacity(0.0, atTime: videoAsset.duration)
         
@@ -113,26 +164,26 @@ public class VideoManipulateUtil {
         exporter.exportAsynchronouslyWithCompletionHandler {
             
             let outputURL = exporter.outputURL
-
+            
             switch (exporter.status) {
-                case AVAssetExportSessionStatus.Completed:
-                    if isSaveToPhotosAlbum {
-                        self.exportCompletionHandleSaveToAssetLibrary(outputURL, block: completionBlock)
-                    }else {
-                        self.exportCompletionHandleNotSaveToAssetLibrary(outputURL, block: completionBlock)
-                    }
-                break;
-
-                case AVAssetExportSessionStatus.Failed:
-                    self.exportCompletionHandleWithError(-1, message: "Exporting Failed", block: completionBlock)
+            case AVAssetExportSessionStatus.Completed:
+                if isSaveToPhotosAlbum {
+                    self.exportCompletionHandleSaveToAssetLibrary(outputURL, block: completionBlock)
+                }else {
+                    self.exportCompletionHandleNotSaveToAssetLibrary(outputURL, block: completionBlock)
+                }
                 break;
                 
-                case AVAssetExportSessionStatus.Cancelled:
-                    self.exportCompletionHandleWithError(-2, message: "Exporting Cancelled", block: completionBlock)
+            case AVAssetExportSessionStatus.Failed:
+                self.exportCompletionHandleWithError(-1, message: "Exporting Failed", block: completionBlock)
                 break;
                 
-                default:
-                    self.exportCompletionHandleWithError(0, message: "Exporting Unkown error occured", block: completionBlock)
+            case AVAssetExportSessionStatus.Cancelled:
+                self.exportCompletionHandleWithError(-2, message: "Exporting Cancelled", block: completionBlock)
+                break;
+                
+            default:
+                self.exportCompletionHandleWithError(0, message: "Exporting Unkown error occured", block: completionBlock)
                 break;
             }
             
@@ -180,52 +231,5 @@ public class VideoManipulateUtil {
         parentLayer.addSublayer(overlayLayer)
         
         composition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayer: videoLayer, inLayer: parentLayer)
-    }
-    
-    
-}
-
-
-extension VideoManipulateUtil {
-    
-    
-}
-
-
-extension VideoManipulateUtil {
-    
-    
-    public func getCoreAnimationBeginTimeAtZero() -> CFTimeInterval {
-        return AVCoreAnimationBeginTimeAtZero
-    }
-    
-    public func querySizeWithAssetURL(#videoURL: NSURL) -> CGSize {
-        let videoAsset = AVURLAsset(URL: videoURL, options: nil)
-        return self.querySize(video: videoAsset)
-    }
-    
-    
-    private func querySize(#video: AVAsset) -> CGSize {
-        
-        let videoAssetTrack = video.tracksWithMediaType(AVMediaTypeVideo).first as! AVAssetTrack
-        let videoTransform = videoAssetTrack.preferredTransform
-        
-        var isVideoAssetPortrait = false
-        
-        if (videoTransform.a == 0 && videoTransform.b == 1.0 && videoTransform.c == -1.0 && videoTransform.d == 0) {
-            isVideoAssetPortrait = true
-        }
-        if (videoTransform.a == 0 && videoTransform.b == -1.0 && videoTransform.c == 1.0 && videoTransform.d == 0) {
-            isVideoAssetPortrait = true
-        }
-        
-        var natureSize = CGSizeZero
-        if isVideoAssetPortrait {
-            natureSize = CGSizeMake(videoAssetTrack.naturalSize.height, videoAssetTrack.naturalSize.width)
-        } else {
-            natureSize = videoAssetTrack.naturalSize
-        }
-        
-        return natureSize
     }
 }
